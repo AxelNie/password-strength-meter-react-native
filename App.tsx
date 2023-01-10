@@ -1,16 +1,17 @@
-import React, {useState} from 'react';
-import {View, TextInput} from 'react-native';
+import React from 'react';
+import {View} from 'react-native';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
 
 const App: React.FC = () => {
-  const [password, setPassword] = useState('');
-
   return (
     <View>
       <PasswordStrengthMeter
-        forceNumber={true}
-        forceCapitalLetter={true}
-        forceSpecialChar={true}
+        minLength={2}
+        forceNumber={false}
+        forceCapitalLetter={false}
+        forceSpecialChar={false}
+        showFeedbackText={true}
+        showStrengthBar={true}
       />
     </View>
   );

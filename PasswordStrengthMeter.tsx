@@ -6,6 +6,8 @@ interface PasswordStrengthMeterProps {
   forceNumber?: boolean;
   forceCapitalLetter?: boolean;
   forceSpecialChar?: boolean;
+  showFeedbackText?: boolean;
+  showStrengthBar?: boolean;
 }
 
 const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
@@ -13,6 +15,8 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
   forceNumber = false,
   forceCapitalLetter = false,
   forceSpecialChar = false,
+  showFeedbackText = true,
+  showStrengthBar = true,
 }) => {
   const [score, setScore] = useState(0);
   const [password, setPassword] = useState('');
@@ -29,22 +33,24 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
     title: {
       fontWeight: 'bold',
       color: 'black',
+      fontSize: 16,
     },
-    innerText: {
-      color: 'red',
+    text: {
+      color: 'black',
     },
     inputField: {
+      marginTop: 10,
+      marginBottom: 10,
       height: 40,
-      margin: 12,
       borderWidth: 1,
-      paddingTop: 10,
-      paddingBottom: 10,
+      padding: 10,
     },
     barContainer: {
       height: 8,
       backgroundColor: 'lightgrey',
       borderRadius: 10,
       marginTop: 10,
+      marginBottom: 10,
     },
     bar: {
       height: 8,
@@ -53,46 +59,44 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
   });
 
   useEffect(() => {
-    checkPasswordStrength(password);
+    checkPasswordStrength();
   }, [password]);
 
-  function checkPasswordStrength(password: string) {
-    setPassword(password);
-    setPasswordMissingNumberSpecialChar(forceSpecialChar);
-    setPasswordMissingNumber(forceNumber);
-    setPasswordMissingCapitalLetter(forceCapitalLetter);
-    let score = 0;
+  function checkPasswordStrength() {
+    let missingNumberSpecialChar = forceSpecialChar;
+    let missingNumber = forceNumber;
+    let missingCapitalLetter = forceCapitalLetter;
+    let score_temp = 0;
 
-    if (password.match(/[a-z]/)) {
-      score += 1;
-    }
     if (password.match(/[A-Z]/)) {
-      setPasswordMissingCapitalLetter(false);
-      score += 1;
+      missingCapitalLetter = false;
+      score_temp += 1;
     }
     if (password.match(/\d+/)) {
-      setPasswordMissingNumber(false);
-      score += 1;
+      missingNumber = false;
+      score_temp += 1;
     }
     if (password.match(/.[!,@,#,$,%,^,&,*,?,_,~,-,(,)]/)) {
-      setPasswordMissingNumberSpecialChar(false);
-      score += 1;
+      missingNumberSpecialChar = false;
+      score_temp += 1;
     }
 
-    setScore(score);
+    //Set score to 0 if any requirements are not met
+    if (missingNumberSpecialChar) {
+      setScore(0);
+    } else if (missingNumber) {
+      setScore(0);
+    } else if (missingCapitalLetter) {
+      setScore(0);
+    } else if (password.length < minLength) {
+      setScore(0);
+    } else {
+      setScore(score_temp); //If all requirements are met, set the score
+    }
 
-    if (passwordMissingNumberSpecialChar) {
-      setScore(0);
-    }
-    if (passwordMissingNumber) {
-      setScore(0);
-    }
-    if (passwordMissingCapitalLetter) {
-      setScore(0);
-    }
-    if (password.length < minLength) {
-      setScore(0);
-    }
+    setPasswordMissingNumberSpecialChar(missingNumberSpecialChar);
+    setPasswordMissingNumber(missingNumber);
+    setPasswordMissingCapitalLetter(missingCapitalLetter);
   }
 
   function getFeedbackText() {
@@ -113,41 +117,45 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
     }
     return feedbackText;
   }
-  console.log(score);
+
   return (
     <View>
       <Text style={styles.title}>Enter password:</Text>
       <TextInput
-        onChangeText={password => checkPasswordStrength(password)}
+        onChangeText={input => setPassword(input)}
         value={password}
         secureTextEntry={true}
         style={styles.inputField}
       />
-      <Text>Password strength: {score}/4</Text>
-      <View style={styles.barContainer}>
-        <View
-          style={[
-            styles.bar,
-            {
-              width: `${(score / 4) * 100}%`,
-              backgroundColor: getColor(score),
-            },
-          ]}
-        />
-      </View>
-      <Text>{getFeedbackText()}</Text>
+      {showStrengthBar ? (
+        <View>
+          <Text style={styles.text}>Password strength: {score}/4</Text>
+          <View style={styles.barContainer}>
+            <View
+              style={[
+                styles.bar,
+                {
+                  width: `${(score / 4) * 100}%`,
+                  backgroundColor: getColor(score),
+                },
+              ]}
+            />
+          </View>
+        </View>
+      ) : null}
+      <Text>{showFeedbackText ? getFeedbackText() : null}</Text>
     </View>
   );
 };
 
 function getColor(score: number) {
-  if (score == 0) {
+  if (score === 0) {
     return 'gray';
-  } else if (score == 1) {
+  } else if (score === 1) {
     return 'red';
-  } else if (score == 2) {
+  } else if (score === 2) {
     return 'yellow';
-  } else if (score == 3) {
+  } else if (score === 3) {
     return 'blue';
   } else {
     return 'green';
