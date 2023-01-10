@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, TextInput} from 'react-native';
+import {View} from 'react-native';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
 
 const App: React.FC = () => {
@@ -8,12 +8,19 @@ const App: React.FC = () => {
   return (
     <View>
       <PasswordStrengthMeter
-        forceNumber={true}
-        forceCapitalLetter={true}
-        forceSpecialChar={true}
+        minLength={10}
+        onChange={(s: string) => console.log('PASS', s)}
       />
     </View>
   );
 };
+
+/*
+<PasswordStrengthMeter
+        forceNumber={true}
+        forceCapitalLetter={true}
+        forceSpecialChar={true}
+      />
+*/
 
 export default App;

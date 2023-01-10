@@ -6,6 +6,7 @@ interface PasswordStrengthMeterProps {
   forceNumber?: boolean;
   forceCapitalLetter?: boolean;
   forceSpecialChar?: boolean;
+  onChange: (s: string) => void;
 }
 
 const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
@@ -13,6 +14,7 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
   forceNumber = false,
   forceCapitalLetter = false,
   forceSpecialChar = false,
+  onChange,
 }) => {
   const [score, setScore] = useState(0);
   const [password, setPassword] = useState('');
@@ -98,33 +100,38 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
   function getFeedbackText() {
     let feedbackText = '';
     if (password.length < minLength) {
-      feedbackText += `Your password should be at least ${minLength} characters long. \n`;
+      feedbackText += `Your password should be at least ${minLength} characters long.\n`;
     }
     if (passwordMissingCapitalLetter) {
       feedbackText +=
-        'Your password should contain at least one uppercase letter. \n';
+        'Your password should contain at least one uppercase letter.\n';
     }
     if (passwordMissingNumber) {
-      feedbackText += 'Your password should contain at least one number. \n';
+      feedbackText += 'Your password should contain at least one number.\n';
     }
     if (passwordMissingNumberSpecialChar) {
       feedbackText +=
-        'Your password should contain at least one special character. \n';
+        'Your password should contain at least one special character.\n';
     }
+
     return feedbackText;
   }
-  console.log(score);
+
   return (
     <View>
       <Text style={styles.title}>Enter password:</Text>
       <TextInput
-        onChangeText={password => checkPasswordStrength(password)}
+        testID="password-input"
+        onChangeText={input => {
+          onChange(input);
+          setPassword(input);
+        }}
         value={password}
         secureTextEntry={true}
         style={styles.inputField}
       />
       <Text>Password strength: {score}/4</Text>
-      <View style={styles.barContainer}>
+      <View style={styles.barContainer} testID="password-strength-meter">
         <View
           style={[
             styles.bar,
