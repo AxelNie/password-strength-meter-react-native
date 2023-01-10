@@ -6,15 +6,24 @@ const App: React.FC = () => {
   return (
     <View>
       <PasswordStrengthMeter
-        minLength={2}
         forceNumber={false}
         forceCapitalLetter={false}
         forceSpecialChar={false}
         showFeedbackText={true}
         showStrengthBar={true}
+        minLength={10}
+        onChange={(s: string) => console.log('PASS', s)}
       />
     </View>
   );
 };
+
+/*
+<PasswordStrengthMeter
+        forceNumber={true}
+        forceCapitalLetter={true}
+        forceSpecialChar={true}
+      />
+*/
 
 export default App;
