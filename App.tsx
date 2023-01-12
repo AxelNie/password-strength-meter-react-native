@@ -1,29 +1,18 @@
 import React from 'react';
 import {View} from 'react-native';
+import Carousel from './Carousel';
 import PasswordStrengthMeter from './PasswordStrengthMeter';
 
 const App: React.FC = () => {
   return (
     <View>
       <PasswordStrengthMeter
-        forceNumber={false}
-        forceCapitalLetter={false}
-        forceSpecialChar={false}
-        showFeedbackText={true}
-        showStrengthBar={true}
-        minLength={10}
-        onChange={(s: string) => console.log('PASS', s)}
+        minLength={8}
+        forceCapitalLetter={true}
+        onChange={string => console.log('PASS', string)}
       />
     </View>
   );
 };
-
-/*
-<PasswordStrengthMeter
-        forceNumber={true}
-        forceCapitalLetter={true}
-        forceSpecialChar={true}
-      />
-*/
 
 export default App;

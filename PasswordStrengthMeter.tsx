@@ -70,6 +70,9 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
     let missingCapitalLetter = forceCapitalLetter;
     let score_temp = 0;
 
+    if (password.match(/[a-z]/)) {
+      score_temp += 1;
+    }
     if (password.match(/[A-Z]/)) {
       missingCapitalLetter = false;
       score_temp += 1;
@@ -95,7 +98,6 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
     } else {
       setScore(score_temp); //If all requirements are met, set the score
     }
-
     setPasswordMissingNumberSpecialChar(missingNumberSpecialChar);
     setPasswordMissingNumber(missingNumber);
     setPasswordMissingCapitalLetter(missingCapitalLetter);
@@ -137,7 +139,7 @@ const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
       {showStrengthBar ? (
         <View>
           <Text style={styles.text}>Password strength: {score}/4</Text>
-          <View style={styles.barContainer}>
+          <View style={styles.barContainer} testID="password-strength-meter">
             <View
               style={[
                 styles.bar,
